@@ -14,17 +14,17 @@ def test_url_sub_params(client):
     assert c.urls[0] == _output[0]
     assert c.data[0] == _output[1]
 
-@patch('client.Client._get')
-def test_get_req(_get, client):
+@patch('grequests.get')
+def test_get_req(get, client):
     (c, _) = client
     c.send(method='GET')
-    _get.assert_called()
+    get.assert_called()
 
-@patch('client.Client._post')
-def test_post_req(_post, client):
+@patch('grequests.post')
+def test_post_req(post, client):
     (c, _) = client
     c.send(method='POST')
-    _post.assert_called()
+    post.assert_called()
 
 def test_unknown_method(client):
     (c, _) = client
