@@ -40,11 +40,11 @@ class Client:
         """
         if method not in set(['GET', 'POST']):
             raise ValueError("Only GET and POST are supported")
-        method = self._get if method == 'GET' else self._post
+        callmethod = self._get if method == 'GET' else self._post
         reqs = zip(self.urls, self.data, self.callbacks)
         for i in range(0, len(self.urls), rate):
             urls, params, funcs = zip(*reqs[i:i+rate])
-            rs = (method(u, ps, timeout=timeout) for u, ps in zip(urls, params))
+            rs = (callmethod(u, ps, timeout) for u, ps in zip(urls, params))
             map(lambda (f, r): f(r), zip(funcs, grequests.map(rs)))
             if i+rate < len(self.urls):
                 time.sleep(wait)
@@ -58,4 +58,4 @@ if __name__ == '__main__':
         print(msg)
 
     lst = [(u, ps, callback)]*5
-    Client(*lst).send(method="GET", rate=2)
+    Client(*lst).send(method='GET', rate=2)
