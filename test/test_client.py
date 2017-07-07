@@ -5,7 +5,7 @@ sys.path.append('.')
 sys.path.append('..')
 
 from mock import patch
-from pytest import fixture
+from pytest import fixture, raises
 from client import Client
 
 def test_url_sub_params(client):
@@ -14,6 +14,22 @@ def test_url_sub_params(client):
     assert c.urls[0] == _output[0]
     assert c.data[0] == _output[1]
 
+@patch('client.Client._get')
+def test_get_req(_get, client):
+    (c, _) = client
+    c.send(method='GET')
+    _get.assert_called()
+
+@patch('client.Client._post')
+def test_post_req(_post, client):
+    (c, _) = client
+    c.send(method='POST')
+    _post.assert_called()
+
+def test_unknown_method(client):
+    (c, _) = client
+    with raises(ValueError):
+        c.send(method='XXX')
 
 @fixture
 def client(client_data):
