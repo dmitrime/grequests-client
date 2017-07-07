@@ -46,7 +46,8 @@ class Client:
             urls, params, funcs = zip(*reqs[i:i+rate])
             rs = (method(u, ps, timeout=timeout) for u, ps in zip(urls, params))
             map(lambda (f, r): f(r), zip(funcs, grequests.map(rs)))
-            time.sleep(wait)
+            if i+rate < len(self.urls):
+                time.sleep(wait)
 
 
 if __name__ == '__main__':
