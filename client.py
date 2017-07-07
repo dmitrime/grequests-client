@@ -3,14 +3,15 @@ import re
 import grequests
 
 class Client:
-    def __init__(self, urlTemplate, params, rate=10):
-        self.rate = rate
-        self.url = self.substituteParams(urlTemplate, params)
+    def __init__(self, *urlParamsList, **kwargs):
+        if 'rate' in kwargs:
+            self.rate = kwargs['rate']
+        self.urls = []
+        for urlTemplate, params in urlParamsList:
+            self.urls.append(self.substituteParams(urlTemplate, params))
     
     def substituteParams(self, urlTemplate, params):
         toReplace = {p: p for p in re.findall(r"\{(.+?)\}", urlTemplate)}
-        print(set(params.keys()))
-        print(set(toReplace.keys()))
         toAppend = {k: params[k] for k in (set(params.keys()) - set(toReplace.keys()))}
         url = urlTemplate
         for (k, v) in toReplace.items():
@@ -23,4 +24,5 @@ if __name__ == '__main__':
     u = 'http://www.foo.com/{bar}/{baz}/bam'
     ps = {'bar': 'mybar', 'baz': 'ubaz', 'foo': 'onefoo'}
 
-    print(Client(u, ps).url)
+    lst = [(u, ps), (u, ps)]
+    print(Client(*lst).urls)
