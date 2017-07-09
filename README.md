@@ -8,7 +8,7 @@ The client supports GET and POST with simple throttling by sending a limited num
 
 First install the requirements, import the client and use it as follows:
 
-
+```python
     def callback(resp):
         if resp is not None:
             print(resp.status_code)
@@ -20,6 +20,7 @@ First install the requirements, import the client and use it as follows:
             ('http://localhost:8000/{foo}/{bar}/ws', {'foo': 'bar', 'bar': 'foo', 'lang': 'python'}, callback)
     ]
     Client(*lst).send(method='GET', rate=2)
+```
 
 
 ### Testing
