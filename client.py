@@ -45,17 +45,24 @@ class Client:
         for i in range(0, len(self.urls), rate):
             urls, params, funcs = zip(*reqs[i:i+rate])
             rs = (callmethod(u, ps, timeout) for u, ps in zip(urls, params))
-            map(lambda (f, r): f(r), zip(funcs, grequests.map(rs)))
+            map(lambda (f, r): f(r), zip(funcs, grequests.map(rs, exception_handler=Client.exception_handler)))
             if i+rate < len(self.urls):
                 time.sleep(wait)
 
+    @staticmethod
+    def exception_handler(request, exception):
+        print("FAILED: %s" % exception.message)
+
 
 if __name__ == '__main__':
-    u = 'http://localhost:8000'
-    ps = {'q': 'python'}
     def callback(resp):
-        msg = resp.status_code if resp is not None else "None"
-        print(msg)
+        if resp is not None:
+            print(resp.status_code)
 
-    lst = [(u, ps, callback)]*5
+    lst = [
+            ('http://localhost:8000', {'lang': 'python'}, callback),
+            ('http://localhost:8000/{bar}', {'bar': 'foo'}, callback),
+            ('http://localhost:8000/{foo}', {'foo': 'bar'}, callback),
+            ('http://localhost:8000/{foo}/{bar}/ws', {'foo': 'bar', 'bar': 'foo', 'lang': 'python'}, callback)
+    ]
     Client(*lst).send(method='GET', rate=2)
