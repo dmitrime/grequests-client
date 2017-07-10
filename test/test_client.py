@@ -31,6 +31,21 @@ def test_unknown_method(client):
     with raises(ValueError):
         c.send(method='XXX')
 
+def test_bad_rate(client):
+    (c, _) = client
+    with raises(ValueError):
+        c.send(rate=0)
+
+def test_bad_wait(client):
+    (c, _) = client
+    with raises(ValueError):
+        c.send(wait=-1)
+
+def test_bad_timeout(client):
+    (c, _) = client
+    with raises(ValueError):
+        c.send(timeout=0)
+
 @fixture
 def client(client_data):
     return Client(client_data[0]), client_data[1]
