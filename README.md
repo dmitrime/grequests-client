@@ -1,8 +1,9 @@
 # grequests client
 
-A client that takes a set of URLs, parameters and callbacks and sends asynchronous requests to those URLs.
+HTTP fetching client that takes a list of `(URL, parameters and callback)` tuples and sends asynchronous requests to those URLs.
 URLs may contain keys between `{` and `}` that will be replaced with values from the parameters dict.
-The client supports GET and POST with simple throttling by sending a limited number of requests and waiting in between.
+The client supports GET and POST with simple throttling by sending requests at a given `rate` and waiting in between.
+Uses [grequests](https://github.com/kennethreitz/grequests).
 
 ### Running
 
