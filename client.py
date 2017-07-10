@@ -34,12 +34,22 @@ class Client:
         """ Wrapper for grequests.post """
         return grequests.post(url, data=params, timeout=timeout)
 
+    def _doChecks(self, method, rate, wait, timeout):
+        if method not in set(['GET', 'POST']):
+            raise ValueError("Only GET and POST are supported")
+        if rate < 1:
+            raise ValueError("Rate must be positive")
+        if wait < 0:
+            raise ValueError("Wait time must be non-negative")
+        if timeout <= 0:
+            raise ValueError("Timeout must be positive")
+
     def send(self, method='GET', rate=10, wait=0.5, timeout=1):
         """ Send concurrent HTTP requests (GET or POST) to the urls, `rate` urls at a time,
             waiting `wait` seconds in between and with the same timeout for all urls.
         """
-        if method not in set(['GET', 'POST']):
-            raise ValueError("Only GET and POST are supported")
+        self._doChecks(method, rate, wait, timeout)
+
         callmethod = self._get if method == 'GET' else self._post
         reqs = zip(self.urls, self.data, self.callbacks)
         for i in range(0, len(self.urls), rate):
